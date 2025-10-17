@@ -502,24 +502,35 @@ class BloodPressureAnalyzer:
         
         # Erstelle Tabellen-Seiten (max 30 Einträge pro Seite)
         rows_per_page = 30
-        for i in range(0, len(df_data), rows_per_page):
+        total_pages = (len(df_data) + rows_per_page - 1) // rows_per_page
+        
+        for page_num, i in enumerate(range(0, len(df_data), rows_per_page)):
             fig, ax = plt.subplots(figsize=(11.69, 8.27))  # A4 Querformat
             ax.axis('off')
             
             # Aktuelle Seitendaten
             page_data = df_data[i:i+rows_per_page]
+            is_last_page = (page_num == total_pages - 1)
             
-            # Tabelle erstellen
+            # Tabelle erstellen mit fester Anzahl von Zeilen
             table_data = [['Zeitstempel', 'SYS', 'DIA', 'Puls']]
             table_data.extend([[row['Zeitstempel'], row['SYS'], row['DIA'], row['Puls']] 
                               for row in page_data])
             
-            table = ax.table(cellText=table_data, loc='center', cellLoc='center')
+            # Fülle die Tabelle mit leeren Zeilen auf, um immer die gleiche Anzahl von Zeilen zu haben
+            current_data_rows = len(page_data)
+            while len(table_data) - 1 < rows_per_page:  # -1 wegen Header-Zeile
+                table_data.append(['', '', '', ''])
+            
+            # Tabelle positionieren (einheitliche Größe für alle Seiten)
+            table = ax.table(cellText=table_data, loc='upper center', cellLoc='center',
+                           bbox=[0, 0.15, 1, 0.80])  # [x, y, width, height] - einheitlich für alle Seiten
+            
             table.auto_set_font_size(False)
             table.set_fontsize(9)
             table.scale(1.2, 1.5)
             
-            # Farbmarkierungen (vereinfacht)
+            # Farbmarkierungen nur für echte Datenzeilen
             for j, entry in enumerate(self.bloodpressure_complete[i:i+rows_per_page], 1):
                 if entry['timestamp'] in morning_timestamps:
                     for k in range(4):
@@ -528,11 +539,30 @@ class BloodPressureAnalyzer:
                     for k in range(4):
                         table[(j, k)].set_facecolor('#FFB366')  # Helles Orange
             
-            # Legende (nur auf erster Seite)
-            if i == 0:
-                ax.text(0.1, 0.05, 'Legende: Gelb = Morgenwerte, Orange = Abendwerte', 
-                       transform=ax.transAxes, fontsize=10)
+            # Entferne Umrandung für leere Zellen
+            for j in range(current_data_rows + 1, rows_per_page + 1):  # +1 wegen Header-Zeile
+                for k in range(4):
+                    table[(j, k)].set_linewidth(0)  # Entferne Umrandung
+                    table[(j, k)].set_facecolor('white')  # Setze Hintergrund auf weiß
             
+            # Legende nur auf der letzten Seite
+            if is_last_page:
+                ax.text(0.5, 0.08, 'Legende: Gelb = Morgenwerte, Orange = Abendwerte', 
+                       transform=ax.transAxes, fontsize=12, ha='center', va='center',
+                       bbox=dict(boxstyle="round,pad=0.3", facecolor="lightgray", alpha=0.8))
+            
+            pdf.savefig(fig, bbox_inches='tight')
+            plt.close()
+        
+        # Falls keine Daten vorhanden, erstelle trotzdem eine Seite mit Legende
+        if not df_data:
+            fig, ax = plt.subplots(figsize=(11.69, 8.27))  # A4 Querformat
+            ax.axis('off')
+            ax.text(0.5, 0.5, 'Keine Daten vorhanden', 
+                   transform=ax.transAxes, fontsize=16, ha='center', va='center')
+            ax.text(0.5, 0.08, 'Legende: Gelb = Morgenwerte, Orange = Abendwerte', 
+                   transform=ax.transAxes, fontsize=12, ha='center', va='center',
+                   bbox=dict(boxstyle="round,pad=0.3", facecolor="lightgray", alpha=0.8))
             pdf.savefig(fig, bbox_inches='tight')
             plt.close()
     

@@ -47,6 +47,9 @@ venv.bak/
 *.svg
 *_temp.png
 
+# Test files (large datasets)
+bloodpressure_large.csv
+
 # OS generated files
 .DS_Store
 .DS_Store?
