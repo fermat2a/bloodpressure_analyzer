@@ -77,3 +77,27 @@ Die SVG Datei mit den Diagramm der daten aus bloodpressure_complete soll bloodpr
 ## Check in
 
 Füge die Änderungen wieder zum git hinzu, erstelle dazu eine gute commit message und synchronisiere die Änderungen zu github.
+
+## Legend overwritten
+
+Wenn die Tabelle mit den Daten zu lang wird, dann wir die Legende aktuell in den Text gedruckt. Bitte stelle sicher, dass die Legende immer unter der Tabelle dargestellt wird. Falls auf der letzten Seite kein Platz mehr ist, dann soll sie auf die nächste Seite gedruckt werden.
+
+## Legend only on last page
+
+Die Legende soll nur auf der letzten Seite erscheinen.
+
+## Higher rows on last page
+
+Auf der letzten Seite sind die Zeilen der Tabelle nun höher als auf den Seiten davor. Die Tabelle scheint den Raum auf der letzten Seite ausfüllen zu wollen. Bitte sorge dafür, dass auch die Zeilen auf der letzten Seite die gleichen Zeilenhöhe habe wie auf den Seiten davor.
+
+## Still higher rows on last page
+
+Nein, die Zeilen auf der letzten Seite sind immernoch höher, als auf den Seiten davor.
+
+## Remove bordering for empty cells
+
+Kannst Du bei den leeren Zellen die Umrandung entfernen?
+
+## Check in
+
+Bitte checke die Daten wieder mit einer guten commit message in git ein und synchronisiere die Änderungen zu github.
