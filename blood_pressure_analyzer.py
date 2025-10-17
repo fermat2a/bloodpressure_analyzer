@@ -176,6 +176,15 @@ class BloodPressureAnalyzer:
         bars3 = ax.bar(x + width, pulse_means, width, yerr=pulse_stds, 
                       label='Puls', color='green', alpha=0.7, capsize=5)
         
+        # Füge Durchschnittswerte und Standardabweichungen in die Balken ein
+        for i, (sys_mean, dia_mean, pulse_mean, sys_std, dia_std, pulse_std) in enumerate(zip(sys_means, dia_means, pulse_means, sys_stds, dia_stds, pulse_stds)):
+            ax.text(x[i] - width, sys_mean/2, f'{sys_mean:.1f}\n±{sys_std:.1f}', 
+                   ha='center', va='center', fontweight='bold', color='white', fontsize=9)
+            ax.text(x[i], dia_mean/2, f'{dia_mean:.1f}\n±{dia_std:.1f}', 
+                   ha='center', va='center', fontweight='bold', color='white', fontsize=9)
+            ax.text(x[i] + width, pulse_mean/2, f'{pulse_mean:.1f}\n±{pulse_std:.1f}', 
+                   ha='center', va='center', fontweight='bold', color='white', fontsize=9)
+        
         ax.set_xlabel('Kategorie', fontsize=12)
         ax.set_ylabel('Werte', fontsize=12)
         ax.set_title('Durchschnittliche Blutdruckwerte mit Standardabweichung', 
@@ -384,6 +393,15 @@ class BloodPressureAnalyzer:
         bars3 = ax.bar(x + width, pulse_means, width, yerr=pulse_stds, 
                       label='Puls', color='green', alpha=0.7, capsize=5)
         
+        # Füge Durchschnittswerte und Standardabweichungen in die Balken ein
+        for i, (sys_mean, dia_mean, pulse_mean, sys_std, dia_std, pulse_std) in enumerate(zip(sys_means, dia_means, pulse_means, sys_stds, dia_stds, pulse_stds)):
+            ax.text(x[i] - width, sys_mean/2, f'{sys_mean:.1f}\n±{sys_std:.1f}', 
+                   ha='center', va='center', fontweight='bold', color='white', fontsize=9)
+            ax.text(x[i], dia_mean/2, f'{dia_mean:.1f}\n±{dia_std:.1f}', 
+                   ha='center', va='center', fontweight='bold', color='white', fontsize=9)
+            ax.text(x[i] + width, pulse_mean/2, f'{pulse_mean:.1f}\n±{pulse_std:.1f}', 
+                   ha='center', va='center', fontweight='bold', color='white', fontsize=9)
+        
         ax.set_xlabel('Kategorie', fontsize=12)
         ax.set_ylabel('Werte', fontsize=12)
         ax.set_title('Durchschnittliche Blutdruckwerte mit Standardabweichung', 
@@ -537,7 +555,7 @@ class BloodPressureAnalyzer:
         
         print("Erstelle Liniendiagramme...")
         self.create_line_chart(self.bloodpressure_complete, 
-                             'bloddpressure_complee.svg', 
+                             'bloodpressure_complete.svg', 
                              'Alle Blutdruckdaten')
         self.create_line_chart(self.bloodpressure_morning, 
                              'bloodpressure_morning.svg', 

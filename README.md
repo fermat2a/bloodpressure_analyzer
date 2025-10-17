@@ -69,7 +69,7 @@ Eine Beispieldatei `bloodpressure_example.csv` ist enthalten mit:
 Das Programm erstellt folgende Dateien:
 
 ### SVG-Diagramme:
-- `bloddpressure_complee.svg`: Liniendiagramm aller Daten
+- `bloodpressure_complete.svg`: Liniendiagramm aller Daten
 - `bloodpressure_morning.svg`: Liniendiagramm der Morgenmessungen
 - `bloodpressure_evening.svg`: Liniendiagramm der Abendmessungen  
 - `bloodpressure_moning_evening.svg`: Kombiniertes Diagramm von Morgen- und Abendmessungen
