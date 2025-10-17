@@ -96,170 +96,9 @@ class BloodPressureAnalyzer:
                     self.bloodpressure_evening.append(entry)
                     break
     
-    def create_line_chart(self, data, filename, title):
-        """Erstellt ein Liniendiagramm für die Blutdruckdaten"""
-        if not data:
-            print(f"Keine Daten für {title}")
-            return
-            
-        timestamps = [entry['timestamp'] for entry in data]
-        sys_values = [entry['sys'] for entry in data]
-        dia_values = [entry['dia'] for entry in data]
-        pulse_values = [entry['pulse'] for entry in data]
-        
-        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 8))
-        
-        # Blutdruckdiagramm
-        ax1.plot(timestamps, sys_values, 'r-', label='Systolisch', linewidth=2)
-        ax1.plot(timestamps, dia_values, 'b-', label='Diastolisch', linewidth=2)
-        ax1.set_ylabel('Blutdruck (mmHg)', fontsize=12)
-        ax1.set_title(title, fontsize=14, fontweight='bold')
-        ax1.legend()
-        ax1.grid(True, alpha=0.3)
-        ax1.xaxis.set_major_formatter(mdates.DateFormatter('%d.%m.%Y %H:%M'))
-        ax1.xaxis.set_major_locator(mdates.DayLocator(interval=1))
-        plt.setp(ax1.xaxis.get_majorticklabels(), rotation=45)
-        
-        # Pulsdiagramm
-        ax2.plot(timestamps, pulse_values, 'g-', label='Puls', linewidth=2)
-        ax2.set_ylabel('Puls (bpm)', fontsize=12)
-        ax2.set_xlabel('Datum/Zeit', fontsize=12)
-        ax2.legend()
-        ax2.grid(True, alpha=0.3)
-        ax2.xaxis.set_major_formatter(mdates.DateFormatter('%d.%m.%Y %H:%M'))
-        ax2.xaxis.set_major_locator(mdates.DayLocator(interval=1))
-        plt.setp(ax2.xaxis.get_majorticklabels(), rotation=45)
-        
-        plt.tight_layout()
-        plt.savefig(filename, format='svg', bbox_inches='tight')
-        plt.close()
+
     
-    def create_average_chart(self):
-        """Erstellt ein Diagramm mit Durchschnittswerten und Standardabweichungen"""
-        datasets = [
-            ('Komplett', self.bloodpressure_complete),
-            ('Morgens', self.bloodpressure_morning),
-            ('Abends', self.bloodpressure_evening)
-        ]
-        
-        categories = []
-        sys_means = []
-        sys_stds = []
-        dia_means = []
-        dia_stds = []
-        pulse_means = []
-        pulse_stds = []
-        
-        for name, data in datasets:
-            if data:
-                categories.append(name)
-                sys_values = [entry['sys'] for entry in data]
-                dia_values = [entry['dia'] for entry in data]
-                pulse_values = [entry['pulse'] for entry in data]
-                
-                sys_means.append(np.mean(sys_values))
-                sys_stds.append(np.std(sys_values))
-                dia_means.append(np.mean(dia_values))
-                dia_stds.append(np.std(dia_values))
-                pulse_means.append(np.mean(pulse_values))
-                pulse_stds.append(np.std(pulse_values))
-        
-        x = np.arange(len(categories))
-        width = 0.25
-        
-        fig, ax = plt.subplots(figsize=(12, 8))
-        
-        bars1 = ax.bar(x - width, sys_means, width, yerr=sys_stds, 
-                      label='Systolisch', color='red', alpha=0.7, capsize=5)
-        bars2 = ax.bar(x, dia_means, width, yerr=dia_stds, 
-                      label='Diastolisch', color='blue', alpha=0.7, capsize=5)
-        bars3 = ax.bar(x + width, pulse_means, width, yerr=pulse_stds, 
-                      label='Puls', color='green', alpha=0.7, capsize=5)
-        
-        # Füge Durchschnittswerte und Standardabweichungen in die Balken ein
-        for i, (sys_mean, dia_mean, pulse_mean, sys_std, dia_std, pulse_std) in enumerate(zip(sys_means, dia_means, pulse_means, sys_stds, dia_stds, pulse_stds)):
-            ax.text(x[i] - width, sys_mean/2, f'{sys_mean:.1f}\n±{sys_std:.1f}', 
-                   ha='center', va='center', fontweight='bold', color='white', fontsize=9)
-            ax.text(x[i], dia_mean/2, f'{dia_mean:.1f}\n±{dia_std:.1f}', 
-                   ha='center', va='center', fontweight='bold', color='white', fontsize=9)
-            ax.text(x[i] + width, pulse_mean/2, f'{pulse_mean:.1f}\n±{pulse_std:.1f}', 
-                   ha='center', va='center', fontweight='bold', color='white', fontsize=9)
-        
-        ax.set_xlabel('Kategorie', fontsize=12)
-        ax.set_ylabel('Werte', fontsize=12)
-        ax.set_title('Durchschnittliche Blutdruckwerte mit Standardabweichung', 
-                    fontsize=14, fontweight='bold')
-        ax.set_xticks(x)
-        ax.set_xticklabels(categories)
-        ax.legend()
-        ax.grid(True, alpha=0.3)
-        
-        plt.tight_layout()
-        plt.savefig('bloodpressure_average.svg', format='svg', bbox_inches='tight')
-        plt.close()
-    
-    def create_morning_evening_chart(self):
-        """Erstellt ein kombiniertes Diagramm für Morgen- und Abenddaten"""
-        if not self.bloodpressure_morning and not self.bloodpressure_evening:
-            print("Keine Morgen- oder Abenddaten vorhanden")
-            return
-        
-        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 8))
-        
-        # Morgen- und Abenddaten kombinieren für bessere Darstellung
-        if self.bloodpressure_morning:
-            morning_timestamps = [entry['timestamp'] for entry in self.bloodpressure_morning]
-            morning_sys = [entry['sys'] for entry in self.bloodpressure_morning]
-            morning_dia = [entry['dia'] for entry in self.bloodpressure_morning]
-            morning_pulse = [entry['pulse'] for entry in self.bloodpressure_morning]
-            
-            # Blutdruckdiagramm - Morgenwerte
-            ax1.plot(morning_timestamps, morning_sys, 'r-', marker='o', label='Systolisch (Morgens)', 
-                    linewidth=2, markersize=6, alpha=0.8)
-            ax1.plot(morning_timestamps, morning_dia, 'b-', marker='o', label='Diastolisch (Morgens)', 
-                    linewidth=2, markersize=6, alpha=0.8)
-            
-            # Pulsdiagramm - Morgenwerte
-            ax2.plot(morning_timestamps, morning_pulse, 'g-', marker='o', label='Puls (Morgens)', 
-                    linewidth=2, markersize=6, alpha=0.8)
-        
-        if self.bloodpressure_evening:
-            evening_timestamps = [entry['timestamp'] for entry in self.bloodpressure_evening]
-            evening_sys = [entry['sys'] for entry in self.bloodpressure_evening]
-            evening_dia = [entry['dia'] for entry in self.bloodpressure_evening]
-            evening_pulse = [entry['pulse'] for entry in self.bloodpressure_evening]
-            
-            # Blutdruckdiagramm - Abendwerte
-            ax1.plot(evening_timestamps, evening_sys, 'r--', marker='s', label='Systolisch (Abends)', 
-                    linewidth=2, markersize=6, alpha=0.8)
-            ax1.plot(evening_timestamps, evening_dia, 'b--', marker='s', label='Diastolisch (Abends)', 
-                    linewidth=2, markersize=6, alpha=0.8)
-            
-            # Pulsdiagramm - Abendwerte
-            ax2.plot(evening_timestamps, evening_pulse, 'g--', marker='s', label='Puls (Abends)', 
-                    linewidth=2, markersize=6, alpha=0.8)
-        
-        # Blutdruckdiagramm formatieren
-        ax1.set_ylabel('Blutdruck (mmHg)', fontsize=12)
-        ax1.set_title('Morgen- und Abendblutdruckwerte im Vergleich', fontsize=14, fontweight='bold')
-        ax1.legend(loc='upper left', bbox_to_anchor=(1.02, 1))
-        ax1.grid(True, alpha=0.3)
-        ax1.xaxis.set_major_formatter(mdates.DateFormatter('%d.%m.%Y'))
-        ax1.xaxis.set_major_locator(mdates.DayLocator(interval=1))
-        plt.setp(ax1.xaxis.get_majorticklabels(), rotation=45)
-        
-        # Pulsdiagramm formatieren
-        ax2.set_ylabel('Puls (bpm)', fontsize=12)
-        ax2.set_xlabel('Datum', fontsize=12)
-        ax2.legend(loc='upper left', bbox_to_anchor=(1.02, 1))
-        ax2.grid(True, alpha=0.3)
-        ax2.xaxis.set_major_formatter(mdates.DateFormatter('%d.%m.%Y'))
-        ax2.xaxis.set_major_locator(mdates.DayLocator(interval=1))
-        plt.setp(ax2.xaxis.get_majorticklabels(), rotation=45)
-        
-        plt.tight_layout()
-        plt.savefig('bloodpressure_moning_evening.svg', format='svg', bbox_inches='tight')
-        plt.close()
+
     
     def create_pdf_report(self):
         """Erstellt den PDF-Bericht"""
@@ -267,8 +106,8 @@ class BloodPressureAnalyzer:
             # Startseite
             self.create_title_page(pdf)
             
-            # Diagramme direkt erstellen (DIN A4 Querformat für alle)
-            self._create_chart_for_pdf(pdf, self.bloodpressure_complete, 'Alle Blutdruckdaten')
+            # Diagramme direkt erstellen (DIN A4 Querformat für alle) und SVGs parallel generieren
+            self._create_chart_for_pdf(pdf, self.bloodpressure_complete, 'Alle Blutdruckdaten', 'bloodpressure_complete.svg')
             
             # Morgen-Abend-Vergleichsdiagramm
             self._create_morning_evening_chart_for_pdf(pdf)
@@ -307,9 +146,10 @@ class BloodPressureAnalyzer:
         pdf.savefig(fig, bbox_inches='tight')
         plt.close()
     
-    def _create_chart_for_pdf(self, pdf, data, title):
-        """Erstellt ein Liniendiagramm direkt für PDF"""
+    def _create_chart_for_pdf(self, pdf, data, title, svg_filename=None):
+        """Erstellt ein Liniendiagramm für PDF und optional auch als SVG"""
         if not data:
+            print(f"Keine Daten für {title}")
             fig, ax = plt.subplots(figsize=(11.69, 8.27))  # A4 Querformat
             ax.text(0.5, 0.5, f'Keine Daten für {title}', 
                    horizontalalignment='center', verticalalignment='center',
@@ -348,6 +188,12 @@ class BloodPressureAnalyzer:
         plt.setp(ax2.xaxis.get_majorticklabels(), rotation=45)
         
         plt.tight_layout()
+        
+        # Speichere als SVG wenn Dateiname angegeben
+        if svg_filename:
+            plt.savefig(svg_filename, format='svg', bbox_inches='tight')
+        
+        # Speichere ins PDF
         pdf.savefig(fig, bbox_inches='tight')
         plt.close()
     
@@ -584,21 +430,7 @@ class BloodPressureAnalyzer:
         self.create_evening_data()
         
         print("Erstelle Liniendiagramme...")
-        self.create_line_chart(self.bloodpressure_complete, 
-                             'bloodpressure_complete.svg', 
-                             'Alle Blutdruckdaten')
-        self.create_line_chart(self.bloodpressure_morning, 
-                             'bloodpressure_morning.svg', 
-                             'Morgendliche Blutdruckdaten')
-        self.create_line_chart(self.bloodpressure_evening, 
-                             'bloodpressure_evening.svg', 
-                             'Abendliche Blutdruckdaten')
-        
-        print("Erstelle Durchschnittsdiagramm...")
-        self.create_average_chart()
-        
-        print("Erstelle Morgen-Abend-Kombinationsdiagramm...")
-        self.create_morning_evening_chart()
+        # SVG-Dateien werden jetzt direkt bei der PDF-Erstellung mit generiert
         
         print("Erstelle PDF-Bericht...")
         self.create_pdf_report()
