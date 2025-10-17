@@ -117,3 +117,43 @@ Ich brauche die Dateien bloodpressure_evening.svg und bloodpressure_morning.svg 
 ## Check in
 
 Bitte checke die Daten wieder mit einer guten commit message in git ein und synchronisiere die Änderungen zu github.
+
+## Can I fetch the data directly from withings.com
+
+Gibt es bei withings.com eine API, von der ich meine Blutdruckdaten beziehen kann?
+
+## Copilot said yes and if asked if he shall assist integrating their API
+
+Ja
+
+## Registering the Application at https://developer.withings.com asks me for Registered URLS
+
+Beim Anlegen der Application bei withings soll ich Registered URLs für den OAuth2 service und data notification eingeben. Was soll ich da eingeben?
+
+## When trying to give the app access I get an error
+
+Wenn ich die Daten von withings holen lassen möchte, dann muss ich im Laufe des Setups im Browser dem Zugriff zustimmen. Wenn ich das Tue, dann erhalte ich danach die Fehlermeldung "
+Verbindung fehlgeschlagen
+
+Firefox kann keine Verbindung zu dem Server unter localhost:8080 aufbauen."
+
+## Connections seems to work, but no data
+
+Die Anmeldung ist erfolgreich, es kommen aber keine Daten an. Ich sehe folgende Fehlermeldung: "API Fehler: Invalid Params: Missing params".
+
+## Update README
+
+Aktualisiere die README.md um einen hinweis, dass man die Daten auch von withings holen kann und einen Verweis auf WITHINGS_SETUP.md.
+
+## Check in
+
+Bitte checke die Daten wieder mit einer guten commit message in git ein und synchronisiere die Änderungen zu github.
+
+## Two READMEs...
+
+Warum gibt es jetzt eine README.md une eine README_WITHINGS.md?
+
+## He said the second one is redundant, everything is in the first and WITHINGS_SETUP.md. So it asked if the README_WITHINGS.md shall be removed. After the prompted it removed the file and also the git repos.
+
+Ja
+
