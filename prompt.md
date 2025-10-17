@@ -57,3 +57,23 @@ Füge mittels git add die Dateien dem git repository hinzu und erstelle einen gi
 ## push to github (here I had to some things manually)
 
 Erstelle auf github ein Projekt bloodpressure_analyzor, verbinde es mit diesem git repository und synchronisiere die Daten von hir zu github.
+
+## Add values to average diagramm
+
+Bitte schreibe bei den durchschnittlichen Blutdruckswerten jeweils den Durchschnittswert in die Balken.
+
+## Add value of std variation to average diagramm
+
+Bitte schreibe bei den durchschnittlichen Blutdruckswerten auch die Standardabweichung in die Balken.
+
+## Check in
+
+Füge die Änderungen wieder zum git hinzu, erstelle dazu eine gute commit message und synchronisiere die Änderungen zu github.
+
+## Change diagramm filename (another typo in first prompt)
+
+Die SVG Datei mit den Diagramm der daten aus bloodpressure_complete soll bloodpressure_complete.svg heißen, nicht bloddpressure_complee.svg.
+
+## Check in
+
+Füge die Änderungen wieder zum git hinzu, erstelle dazu eine gute commit message und synchronisiere die Änderungen zu github.
