@@ -157,3 +157,6 @@ Warum gibt es jetzt eine README.md une eine README_WITHINGS.md?
 
 Ja
 
+## I check the bash script and it started the setup of the withings connection before chenging into the virtual environment and installing the libs. After this prompt her repaired it and brought the changes automatically up to github.
+
+In run_analyzer.sh führst Du withings_client.py außerhalb des virtual environments aus. Kann das ein Problem sein, weil evtl. python module dort nicht zur Verfügung stehen?
