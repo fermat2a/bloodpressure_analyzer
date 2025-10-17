@@ -11,23 +11,15 @@ PYTHON_SCRIPT="$SCRIPT_DIR/blood_pressure_analyzer.py"
 
 echo "=== Blood Pressure Analyzer Setup ==="
 
-# Prüfe auf Withings Parameter
+# Speichere Withings Check für später (nach venv setup)
+WITHINGS_SETUP_NEEDED=false
 if [[ "$*" == *"--withings"* ]]; then
     echo "Withings API wird verwendet..."
     
     # Prüfe Withings Setup
     if [ ! -f "$SCRIPT_DIR/withings_credentials.json" ]; then
-        echo "Withings Setup erforderlich..."
-        echo "Führe 'python withings_client.py' für das initiale Setup aus."
-        read -p "Möchten Sie das Setup jetzt durchführen? (y/n): " -n 1 -r
-        echo
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
-            cd "$SCRIPT_DIR"
-            python3 withings_client.py
-        else
-            echo "Setup abgebrochen. Withings API kann nicht verwendet werden."
-            exit 1
-        fi
+        echo "Withings Setup wird nach Virtual Environment Setup durchgeführt..."
+        WITHINGS_SETUP_NEEDED=true
     fi
 fi
 
@@ -61,12 +53,28 @@ else
         "matplotlib>=3.5.0"
         "pandas>=1.3.0"
         "numpy>=1.21.0"
+        "requests>=2.25.0"
     )
 
     for package in "${PACKAGES[@]}"; do
         echo "Installiere $package..."
         pip install "$package" > /dev/null 2>&1
     done
+fi
+
+# Führe Withings Setup im Virtual Environment durch
+if [ "$WITHINGS_SETUP_NEEDED" = true ]; then
+    echo "Withings Setup erforderlich..."
+    echo "Führe 'python withings_client.py' für das initiale Setup aus."
+    read -p "Möchten Sie das Setup jetzt durchführen? (y/n): " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        cd "$SCRIPT_DIR"
+        python withings_client.py  # Jetzt im Virtual Environment!
+    else
+        echo "Setup abgebrochen. Withings API kann nicht verwendet werden."
+        exit 1
+    fi
 fi
 
 # Prüfe ob das Python-Skript existiert
