@@ -101,3 +101,19 @@ Kannst Du bei den leeren Zellen die Umrandung entfernen?
 ## Check in
 
 Bitte checke die Daten wieder mit einer guten commit message in git ein und synchronisiere die Änderungen zu github.
+
+## Clean up code
+
+Warum hast Du eigene Methoden zum erzeugen der Diagramm für die SVG und PDF Dateien erstellt?
+
+## Did not like to create figure two times, even using same code
+
+Könntest Du die SVG-Datei nicht auch einfach in _create_chart_for_pdf erzeugen, so dass der Code aus _create_base_chart nur einmal aufgerufen würde?
+
+## Remove unused figures (in svg) and clean up code
+
+Ich brauche die Dateien bloodpressure_evening.svg und bloodpressure_morning.svg nicht mehr. Du kannst den Code, der zu deren Erzeugung da war, auch entfernen.
+
+## Check in
+
+Bitte checke die Daten wieder mit einer guten commit message in git ein und synchronisiere die Änderungen zu github.
