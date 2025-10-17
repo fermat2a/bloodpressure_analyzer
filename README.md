@@ -1,10 +1,11 @@
 # Blood Pressure Analyzer
 
-Ein Python-Programm zur Analyse und Visualisierung von Blutdruckdaten aus CSV-Dateien.
+Ein Python-Programm zur Analyse und Visualisierung von Blutdruckdaten aus CSV-Dateien oder direkt von Withings Blutdruckmessgeräten.
 
 ## Funktionen
 
-- Lädt Blutdruckdaten aus CSV-Dateien
+- **Lädt Blutdruckdaten aus CSV-Dateien** - Für manuelle Datenimporte
+- **🩺 Automatischer Import von Withings API** - Direkt von Ihren Blutdruckmessgeräten (BPM Connect, BPM Connect Pro, BPM Core)
 - Filtert Daten nach Zeiträumen
 - Erstellt separate Listen für Morgen- und Abendmessungen
 - Generiert Liniendiagramme für alle Datensätze
@@ -13,7 +14,16 @@ Ein Python-Programm zur Analyse und Visualisierung von Blutdruckdaten aus CSV-Da
 
 ## Verwendung
 
-### Einfache Ausführung mit dem Bash-Skript:
+### 🩺 Neu: Automatischer Import von Withings (Empfohlen!)
+
+```bash
+# Direkt von Withings Blutdruckmessgerät abrufen
+./run_analyzer.sh --withings --start "2025-10-01 00:00:00" --end "2025-10-17 23:59:59"
+```
+
+**Setup erforderlich**: Siehe [WITHINGS_SETUP.md](WITHINGS_SETUP.md) für die detaillierte Anleitung zur Einrichtung der Withings API Integration.
+
+### Traditionelle CSV-Analyse:
 
 ```bash
 ./run_analyzer.sh <CSV-Datei> [--start "YYYY-MM-DD HH:MM:SS"] [--end "YYYY-MM-DD HH:MM:SS"]
@@ -22,7 +32,10 @@ Ein Python-Programm zur Analyse und Visualisierung von Blutdruckdaten aus CSV-Da
 ### Beispiele:
 
 ```bash
-# Alle Daten analysieren
+# 🩺 Withings API - Automatischer Import (empfohlen)
+./run_analyzer.sh --withings --start "2025-10-01 00:00:00" --end "2025-10-17 23:59:59"
+
+# CSV-Daten analysieren
 ./run_analyzer.sh bloodPressure.csv
 
 # Mit der Beispieldatei
@@ -33,15 +46,34 @@ Ein Python-Programm zur Analyse und Visualisierung von Blutdruckdaten aus CSV-Da
 
 # Daten in einem bestimmten Zeitraum
 ./run_analyzer.sh bloodPressure.csv --start "2025-09-25 00:00:00" --end "2025-09-30 23:59:59"
+
+# Kombiniert: CSV + Withings API
+./run_analyzer.sh manual_data.csv --withings --start "2025-10-01 00:00:00" --end "2025-10-17 23:59:59"
 ```
 
 ### Direkte Python-Ausführung:
 
 ```bash
+# Mit Withings API
+python3 blood_pressure_analyzer.py --withings --start "YYYY-MM-DD HH:MM:SS" --end "YYYY-MM-DD HH:MM:SS"
+
+# Mit CSV-Datei
 python3 blood_pressure_analyzer.py <CSV-Datei> [--start "YYYY-MM-DD HH:MM:SS"] [--end "YYYY-MM-DD HH:MM:SS"]
 ```
 
-## CSV-Format
+## Datenquellen
+
+### 🩺 Withings API (Empfohlen)
+**Automatischer Import** von Withings Blutdruckmessgeräten:
+- **BPM Connect**: Bluetooth-fähiges Standardgerät
+- **BPM Connect Pro**: Professionelle Medizin-Version  
+- **BPM Core**: Mit zusätzlicher EKG-Funktion
+
+**Vorteile**: Keine manuelle Dateneingabe, immer aktuelle Daten, höchste Genauigkeit
+
+**Setup**: Siehe detaillierte Anleitung in [WITHINGS_SETUP.md](WITHINGS_SETUP.md)
+
+### CSV-Format (Alternative)
 
 Die CSV-Datei muss folgende Spalten enthalten:
 - `Date`: Zeitstempel im ISO-Format (z.B. 2025-09-23T21:00:51.000+02:00)
@@ -107,15 +139,31 @@ Das Programm erstellt folgende Dateien:
 - matplotlib >= 3.5.0
 - pandas >= 1.3.0
 - numpy >= 1.21.0
+- requests >= 2.25.0 (für Withings API)
 
 ## Setup
 
+### Grundinstallation
 Das Bash-Skript `run_analyzer.sh` führt automatisch folgende Schritte aus:
 
 1. Erstellt ein Python Virtual Environment (falls nicht vorhanden)
 2. Aktiviert das Virtual Environment
 3. Installiert alle benötigten Pakete
 4. Führt das Analyseprogramm aus
+
+### 🩺 Withings API Setup (Optional)
+Für den automatischen Datenimport von Withings Blutdruckmessgeräten:
+
+```bash
+# Interaktives Setup durchführen
+python withings_client.py
+```
+
+**Detaillierte Anleitung**: Siehe [WITHINGS_SETUP.md](WITHINGS_SETUP.md) für:
+- Withings Developer Account erstellen
+- App-Konfiguration
+- OAuth-Autorisierung
+- Fehlerbehebung
 
 ## PDF-Format
 

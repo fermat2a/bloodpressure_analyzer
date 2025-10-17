@@ -11,6 +11,26 @@ PYTHON_SCRIPT="$SCRIPT_DIR/blood_pressure_analyzer.py"
 
 echo "=== Blood Pressure Analyzer Setup ==="
 
+# Prüfe auf Withings Parameter
+if [[ "$*" == *"--withings"* ]]; then
+    echo "Withings API wird verwendet..."
+    
+    # Prüfe Withings Setup
+    if [ ! -f "$SCRIPT_DIR/withings_credentials.json" ]; then
+        echo "Withings Setup erforderlich..."
+        echo "Führe 'python withings_client.py' für das initiale Setup aus."
+        read -p "Möchten Sie das Setup jetzt durchführen? (y/n): " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            cd "$SCRIPT_DIR"
+            python3 withings_client.py
+        else
+            echo "Setup abgebrochen. Withings API kann nicht verwendet werden."
+            exit 1
+        fi
+    fi
+fi
+
 # Prüfe ob Python3 installiert ist
 if ! command -v python3 &> /dev/null; then
     echo "Fehler: python3 ist nicht installiert!"

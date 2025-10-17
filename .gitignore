@@ -18,6 +18,10 @@ var/
 wheels/
 *.egg-info/
 .installed.cfg
+
+# Withings API Credentials und Tokens
+withings_credentials.json
+withings_config.json
 *.egg
 MANIFEST
 

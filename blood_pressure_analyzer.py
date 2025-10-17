@@ -14,18 +14,82 @@ import pandas as pd
 from pathlib import Path
 from collections import defaultdict
 import numpy as np
+from pathlib import Path
+
+# Optionaler Import für Withings API
+try:
+    from withings_client import WithingsClient
+    WITHINGS_AVAILABLE = True
+except ImportError:
+    WITHINGS_AVAILABLE = False
+    WithingsClient = None
 
 
 class BloodPressureAnalyzer:
-    def __init__(self, csv_file, start_time=None, end_time=None):
+    def __init__(self, csv_file=None, start_time=None, end_time=None, use_withings=False):
         self.csv_file = csv_file
         self.start_time = start_time
         self.end_time = end_time
+        self.use_withings = use_withings
+        self.withings_client = None
         self.bloodpressure_complete = []
         self.bloodpressure_morning = []
         self.bloodpressure_evening = []
         
+        # Initialisiere Withings Client falls gewünscht
+        if self.use_withings:
+            self._setup_withings_client()
+    
+    def _setup_withings_client(self):
+        """Initialisiert den Withings API Client"""
+        if not WITHINGS_AVAILABLE:
+            print("Fehler: withings_client.py nicht gefunden oder requests nicht installiert.")
+            print("Installiere requests: pip install requests")
+            return False
+        
+        credentials_file = Path('withings_credentials.json')
+        if not credentials_file.exists():
+            print("Keine Withings Credentials gefunden.")
+            print("Führe 'python withings_client.py' für das Setup aus.")
+            return False
+        
+        try:
+            import json
+            with open(credentials_file, 'r') as f:
+                creds = json.load(f)
+            
+            self.withings_client = WithingsClient(
+                creds['client_id'],
+                creds['client_secret'],
+                creds.get('redirect_uri', 'http://localhost:8080/callback')
+            )
+            
+            # Teste Verbindung
+            if not self.withings_client.test_connection():
+                print("Withings API Autorisierung erforderlich...")
+                if not self.withings_client.authorize():
+                    print("Withings Autorisierung fehlgeschlagen!")
+                    self.withings_client = None
+                    return False
+            
+            print("Withings API erfolgreich verbunden!")
+            return True
+            
+        except Exception as e:
+            print(f"Fehler beim Setup der Withings API: {e}")
+            self.withings_client = None
+            return False
+    
     def load_data(self):
+        """Lädt die Daten aus CSV-Datei oder Withings API"""
+        if self.use_withings and self.withings_client:
+            self._load_data_from_withings()
+        elif self.csv_file:
+            self._load_data_from_csv()
+        else:
+            print("Fehler: Weder CSV-Datei noch Withings API verfügbar!")
+    
+    def _load_data_from_csv(self):
         """Lädt die Daten aus der CSV-Datei"""
         with open(self.csv_file, 'r') as file:
             reader = csv.DictReader(file)
@@ -41,6 +105,21 @@ class BloodPressureAnalyzer:
                     'dia': dia_bp,
                     'pulse': pulse
                 })
+    
+    def _load_data_from_withings(self):
+        """Lädt die Daten von der Withings API"""
+        if not self.start_time or not self.end_time:
+            print("Fehler: Start- und Endzeitpunkt sind für Withings API erforderlich!")
+            return
+        
+        print("Lade Blutdruckdaten von Withings API...")
+        data = self.withings_client.get_blood_pressure_data(self.start_time, self.end_time)
+        
+        if data:
+            self.bloodpressure_complete = data
+            print(f"Erfolgreich {len(data)} Messungen von Withings geladen!")
+        else:
+            print("Keine Blutdruckdaten von Withings API erhalten.")
     
     def sort_data(self):
         """Sortiert die Daten nach Zeitstempel"""
@@ -443,11 +522,31 @@ class BloodPressureAnalyzer:
 
 def main():
     parser = argparse.ArgumentParser(description='Blutdruckdaten-Analyzer')
-    parser.add_argument('csv_file', help='Pfad zur CSV-Datei mit Blutdruckdaten')
+    
+    # Mache CSV-Datei optional wenn Withings verwendet wird
+    parser.add_argument('csv_file', nargs='?', help='Pfad zur CSV-Datei mit Blutdruckdaten')
     parser.add_argument('--start', type=str, help='Startzeitpunkt (YYYY-MM-DD HH:MM:SS)')
     parser.add_argument('--end', type=str, help='Endzeitpunkt (YYYY-MM-DD HH:MM:SS)')
+    parser.add_argument('--withings', action='store_true', 
+                       help='Verwende Withings API anstatt CSV-Datei')
     
     args = parser.parse_args()
+    
+    # Validiere Parameter
+    if args.withings:
+        if not args.start or not args.end:
+            print("Fehler: --start und --end sind für Withings API erforderlich!")
+            return
+        if not WITHINGS_AVAILABLE:
+            print("Fehler: Withings API nicht verfügbar. Installiere 'requests' und führe Setup aus.")
+            return
+    else:
+        if not args.csv_file:
+            print("Fehler: CSV-Datei erforderlich wenn --withings nicht verwendet wird!")
+            return
+        if not Path(args.csv_file).exists():
+            print(f"CSV-Datei nicht gefunden: {args.csv_file}")
+            return
     
     # Parse Zeitstempel
     start_time = None
@@ -475,13 +574,13 @@ def main():
             print(f"Fehler beim Parsen des Endzeitpunkts: {args.end}")
             return
     
-    # Prüfe ob CSV-Datei existiert
-    if not Path(args.csv_file).exists():
-        print(f"CSV-Datei nicht gefunden: {args.csv_file}")
-        return
-    
     # Starte Analyse
-    analyzer = BloodPressureAnalyzer(args.csv_file, start_time, end_time)
+    analyzer = BloodPressureAnalyzer(
+        csv_file=args.csv_file, 
+        start_time=start_time, 
+        end_time=end_time,
+        use_withings=args.withings
+    )
     analyzer.run_analysis()
 
 
