@@ -205,6 +205,19 @@ Dieses Programm wird ohne jegliche Gewährleistung zur Verfügung gestellt. Da d
 - Beachten Sie lokale Datenschutzbestimmungen (DSGVO, etc.)
 - Withings API-Zugriffe unterliegen den Withings Nutzungsbedingungen
 
+## 📄 Copyright und Lizenz
+
+**Copyright-Hinweis:**
+Es ist unklar, in wie weit ich das Copyright an dem entstandenen Code habe, da der gesamte Quelltext von GitHub Copilot erstellt wurde. Die rechtlichen Aspekte von AI-generiertem Code sind noch nicht abschließend geklärt.
+
+**Lizenz:**
+Falls es meine Wahl ist, stelle ich diesen Code unter der **GNU General Public License v2 (GPL v2)** zur Verfügung. Die vollständige Lizenz finden Sie in der Datei [`license.txt`](license.txt).
+
+**Nutzung:**
+- Sie können den Code unter den Bedingungen der GPL v2 verwenden, modifizieren und weiterverbreiten
+- Beachten Sie dabei die spezifischen Anforderungen der GPL v2 bezüglich Quellcode-Verfügbarkeit
+- Die Lizenz gilt vorbehaltlich der ungeklärten Copyright-Situation bei AI-generiertem Code
+
 ## Autor
 
 Sascha Effert - Blood Pressure Data Analysis Tool
