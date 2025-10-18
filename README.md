@@ -1,5 +1,8 @@
 # Blood Pressure Analyzer
 
+> **🤖 ENTWICKLUNGSHINWEIS**  
+> **Dieses Programm ist durch Verwendung von GitHub Copilot mit Hilfe von Visual Studio Code entstanden. Mit diesem Programm will ich die Fähigkeiten dieser Werkzeuge evaluieren. Daher versuche ich keine manuellen Eingriffe in dieses Projekt zu machen, die gesamte Bearbeitung aller Dateien, inkl. Dokumentation und git commit messages wird von github copilot erledigt.**
+
 Ein Python-Programm zur Analyse und Visualisierung von Blutdruckdaten aus CSV-Dateien oder direkt von Withings Blutdruckmessgeräten.
 
 ## Funktionen
