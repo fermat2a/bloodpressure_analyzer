@@ -32,6 +32,49 @@ def get_local_timezone():
 
 # Globale Variable für lokale Zeitzone
 LOCAL_TZ = get_local_timezone()
+
+def setup_x_axis_with_10_ticks(ax, timestamps, include_time=True):
+    """
+    Konfiguriert X-Achse mit genau 10 gleichverteilten Zeitpunkten
+    
+    Args:
+        ax: Matplotlib Axes Objekt
+        timestamps: Liste/Array der Zeitstempel-Daten
+        include_time: Boolean - True für Datum+Zeit, False nur für Datum
+    """
+    if len(timestamps) == 0:
+        return
+        
+    # Finde den Zeitbereich
+    min_time = min(timestamps)
+    max_time = max(timestamps)
+    
+    # Erstelle 10 gleichverteilte Zeitpunkte
+    time_range = max_time - min_time
+    tick_positions = []
+    
+    for i in range(10):
+        tick_time = min_time + (time_range * i / 9)  # 9 Intervalle für 10 Punkte
+        tick_positions.append(tick_time)
+    
+    # Setze die Ticks
+    ax.set_xticks(tick_positions)
+    
+    # Formatiere die Labels
+    if include_time:
+        # Für detaillierte Diagramme: Datum + Zeit
+        if time_range.days > 7:
+            # Für längere Zeiträume: Kurzes Datumsformat
+            formatter = mdates.DateFormatter('%d.%m.%y')
+        else:
+            # Für kurze Zeiträume: Datum + Zeit
+            formatter = mdates.DateFormatter('%d.%m %H:%M')
+    else:
+        # Nur Datum für Übersichtsdiagramme
+        formatter = mdates.DateFormatter('%d.%m.%Y')
+    
+    ax.xaxis.set_major_formatter(formatter)
+    plt.setp(ax.xaxis.get_majorticklabels(), rotation=45)
 import numpy as np
 from pathlib import Path
 
@@ -271,9 +314,7 @@ class BloodPressureAnalyzer:
         ax1.set_title(title, fontsize=14, fontweight='bold')
         ax1.legend()
         ax1.grid(True, alpha=0.3)
-        ax1.xaxis.set_major_formatter(mdates.DateFormatter('%d.%m.%Y %H:%M'))
-        ax1.xaxis.set_major_locator(mdates.DayLocator(interval=1))
-        plt.setp(ax1.xaxis.get_majorticklabels(), rotation=45)
+        setup_x_axis_with_10_ticks(ax1, timestamps, include_time=True)
         
         # Pulsdiagramm
         ax2.plot(timestamps, pulse_values, 'g-', label='Puls', linewidth=2)
@@ -281,9 +322,7 @@ class BloodPressureAnalyzer:
         ax2.set_xlabel('Datum/Zeit', fontsize=12)
         ax2.legend()
         ax2.grid(True, alpha=0.3)
-        ax2.xaxis.set_major_formatter(mdates.DateFormatter('%d.%m.%Y %H:%M'))
-        ax2.xaxis.set_major_locator(mdates.DayLocator(interval=1))
-        plt.setp(ax2.xaxis.get_majorticklabels(), rotation=45)
+        setup_x_axis_with_10_ticks(ax2, timestamps, include_time=True)
         
         plt.tight_layout()
         
@@ -411,18 +450,22 @@ class BloodPressureAnalyzer:
         ax1.set_title('Morgen- und Abendblutdruckwerte im Vergleich', fontsize=14, fontweight='bold')
         ax1.legend()
         ax1.grid(True, alpha=0.3)
-        ax1.xaxis.set_major_formatter(mdates.DateFormatter('%d.%m.%Y'))
-        ax1.xaxis.set_major_locator(mdates.DayLocator(interval=1))
-        plt.setp(ax1.xaxis.get_majorticklabels(), rotation=45)
+        
+        # Sammle alle Zeitstempel für die X-Achsen-Formatierung
+        all_timestamps = []
+        if self.bloodpressure_morning:
+            all_timestamps.extend([entry['timestamp'] for entry in self.bloodpressure_morning])
+        if self.bloodpressure_evening:
+            all_timestamps.extend([entry['timestamp'] for entry in self.bloodpressure_evening])
+        
+        setup_x_axis_with_10_ticks(ax1, all_timestamps, include_time=False)
         
         # Pulsdiagramm formatieren
         ax2.set_ylabel('Puls (bpm)', fontsize=12)
         ax2.set_xlabel('Datum', fontsize=12)
         ax2.legend()
         ax2.grid(True, alpha=0.3)
-        ax2.xaxis.set_major_formatter(mdates.DateFormatter('%d.%m.%Y'))
-        ax2.xaxis.set_major_locator(mdates.DayLocator(interval=1))
-        plt.setp(ax2.xaxis.get_majorticklabels(), rotation=45)
+        setup_x_axis_with_10_ticks(ax2, all_timestamps, include_time=False)
         
         plt.tight_layout()
         pdf.savefig(fig, bbox_inches='tight')
