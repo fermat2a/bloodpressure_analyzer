@@ -13,6 +13,25 @@ from matplotlib.backends.backend_pdf import PdfPages
 import pandas as pd
 from pathlib import Path
 from collections import defaultdict
+import time as time_module  # Für time.tzname
+
+def get_local_timezone():
+    """Ermittelt die aktuelle lokale Zeitzone"""
+    from datetime import timezone, timedelta
+    
+    # Ermittle die lokale Zeitzone (berücksichtigt Sommer-/Winterzeit)
+    if time_module.daylight:
+        # Sommerzeit verfügbar
+        offset_seconds = -time_module.altzone if time_module.localtime().tm_isdst else -time_module.timezone
+    else:
+        # Keine Sommerzeit
+        offset_seconds = -time_module.timezone
+    
+    offset_hours = offset_seconds // 3600
+    return timezone(timedelta(hours=offset_hours))
+
+# Globale Variable für lokale Zeitzone
+LOCAL_TZ = get_local_timezone()
 import numpy as np
 from pathlib import Path
 
@@ -112,7 +131,7 @@ class BloodPressureAnalyzer:
             print("Fehler: Start- und Endzeitpunkt sind für Withings API erforderlich!")
             return
         
-        print("Lade Blutdruckdaten von Withings API...")
+        print(f"Lade Blutdruckdaten von Withings API (Zeitraum: {self.start_time.strftime('%Y-%m-%d %H:%M:%S')} bis {self.end_time.strftime('%Y-%m-%d %H:%M:%S')})...")
         data = self.withings_client.get_blood_pressure_data(self.start_time, self.end_time)
         
         if data:
@@ -534,9 +553,6 @@ def main():
     
     # Validiere Parameter
     if args.withings:
-        if not args.start or not args.end:
-            print("Fehler: --start und --end sind für Withings API erforderlich!")
-            return
         if not WITHINGS_AVAILABLE:
             print("Fehler: Withings API nicht verfügbar. Installiere 'requests' und führe Setup aus.")
             return
@@ -557,22 +573,28 @@ def main():
             start_time = datetime.fromisoformat(args.start.replace(' ', 'T'))
             # Wenn keine Zeitzone angegeben, verwende lokale Zeitzone
             if start_time.tzinfo is None:
-                from datetime import timezone, timedelta
-                start_time = start_time.replace(tzinfo=timezone(timedelta(hours=2)))  # CEST
+                start_time = start_time.replace(tzinfo=LOCAL_TZ)
         except ValueError:
             print(f"Fehler beim Parsen des Startzeitpunkts: {args.start}")
             return
+    elif args.withings:
+        # Standard-Startzeitpunkt für Withings API: 2021-01-01 00:00:00
+        start_time = datetime(2021, 1, 1, 0, 0, 0, tzinfo=LOCAL_TZ)
+        print("Kein Startzeitpunkt angegeben - verwende Standard: 2021-01-01 00:00:00")
     
     if args.end:
         try:
             end_time = datetime.fromisoformat(args.end.replace(' ', 'T'))
             # Wenn keine Zeitzone angegeben, verwende lokale Zeitzone
             if end_time.tzinfo is None:
-                from datetime import timezone, timedelta
-                end_time = end_time.replace(tzinfo=timezone(timedelta(hours=2)))  # CEST
+                end_time = end_time.replace(tzinfo=LOCAL_TZ)
         except ValueError:
             print(f"Fehler beim Parsen des Endzeitpunkts: {args.end}")
             return
+    elif args.withings:
+        # Standard-Endzeitpunkt für Withings API: aktuelles Datum und Zeit
+        end_time = datetime.now(LOCAL_TZ)
+        print(f"Kein Endzeitpunkt angegeben - verwende aktuelles Datum: {end_time.strftime('%Y-%m-%d %H:%M:%S')}")
     
     # Starte Analyse
     analyzer = BloodPressureAnalyzer(
