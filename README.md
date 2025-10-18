@@ -182,6 +182,29 @@ Alle Seiten im PDF-Dokument verwenden das **DIN A4 Querformat** (11.69 × 8.27 Z
 - Behandelt leere Datensätze
 - Zeigt aussagekräftige Fehlermeldungen
 
+## ⚠️ Haftungsausschluss und Gewährleistung
+
+**WICHTIGER HINWEIS: Ausschluss sämtlicher Gewährleistung**
+
+Dieses Programm wird ohne jegliche Gewährleistung zur Verfügung gestellt. Da der gesamte Code durch GitHub Copilot erstellt wurde und keine manuellen Überprüfungen oder Anpassungen vorgenommen wurden, kann ich keine Garantie für die Korrektheit, Vollständigkeit oder Eignung für einen bestimmten Zweck übernehmen.
+
+**Medizinische Daten-Haftungsausschluss:**
+- Dieses Tool dient ausschließlich informativen Zwecken
+- Es ersetzt keine professionelle medizinische Beratung, Diagnose oder Behandlung
+- Konsultieren Sie immer einen Arzt bei gesundheitlichen Fragen
+- Die automatisierte Analyse kann Fehler enthalten
+
+**AI-generierter Code:**
+- Der Code wurde vollständig von GitHub Copilot generiert
+- Keine manuellen Code-Reviews oder Tests wurden durchgeführt  
+- Die Funktionalität kann unvorhersehbare Fehler aufweisen
+- Verwendung erfolgt auf eigene Verantwortung
+
+**Datenschutz:**
+- Stellen Sie sicher, dass Sie berechtigt sind, die verwendeten Gesundheitsdaten zu verarbeiten
+- Beachten Sie lokale Datenschutzbestimmungen (DSGVO, etc.)
+- Withings API-Zugriffe unterliegen den Withings Nutzungsbedingungen
+
 ## Autor
 
 Sascha Effert - Blood Pressure Data Analysis Tool
